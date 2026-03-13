@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лоховские мысли</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="icon" href="src/favicon.png" type="image/png">
+</head>
+<body>
+    <div class="page-container">
+
+        <!-- Фон -->
+        <div class="background" aria-hidden="true"></div>
+
+        <!-- Логотип -->
+        <header class="header">
+            <img src="src/logo.png" alt="Логотип Лоховские мысли" class="logo">
+        </header>
+
+        <!-- Кнопка Telegram -->
+        <nav class="social">
+            <a href="https://t.me/esirak" target="_blank" rel="noopener noreferrer" class="tg-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="30" height="30" aria-hidden="true" focusable="false">
+                    <circle cx="120" cy="120" r="120" fill="#37AEE2"/>
+                    <path d="M57 120l96-40-30 100-66-60z" fill="#fff"/>
+                </svg>
+                Telegram
+            </a>
+        </nav>
+
+        <!-- Персонажи -->
+        <div class="character-container alex-container">
+            <img src="src2/alex.png" alt="Alex" class="character">
+            <span class="character-label">SLIM</span>
+        </div>
+
+        <div class="character-container steve-container">
+            <img src="src2/steve.png" alt="Steve" class="character">
+            <span class="character-label">WIDE</span>
+        </div>
+
+        <!-- Прайс-лист и правила — теперь перед галереей -->
+        <section class="pricing-rules">
+            <h2>Основные услуги</h2>
+            <ul class="services">
+                <li>Скин от нуля - 230 ₽</li>
+                <li>Костюм - 200 ₽</li>
+                <li>Решейд - 180 ₽</li>
+                <li>Стикер-пак со скином:
+                    <ul>
+                        <li>5 стикеров - 100 ₽</li>
+                        <li>15 стикеров - 200 ₽</li>
+                    </ul>
+                </li>
+                <li>Доп.услуги: 1 деталь к скину с модом ears (или figura мод, лёгкий) - 50 ₽</li>
+            </ul>
+
+            <h2>Правила заказа</h2>
+            <ol class="rules">
+                <li>ОБЯЗАТЕЛЬНО написать формат рук (WIDE/SLIM)</li>
+                <li>Заказ делается в течении 3 дней, если очередь большая — до 5 дней</li>
+                <li>ТРИ поправки бесплатны, все остальные — 10 ₽</li>
+                <li>Я не придумываю скин, я только выполняю вашу идею</li>
+            </ol>
+        </section>
+
+        <!-- Галерея -->
+        <main>
+            <section class="gallery" id="gallery" aria-label="Галерея изображений"></section>
+        </main>
+
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
