@@ -128,7 +128,7 @@ body {
     display: block;
     margin-top: 8px;
     font-size: 20px;
-    color: #fff;
+    color: #000;
     font-weight: 600;
 }
 
@@ -180,7 +180,7 @@ body {
     margin: 500px auto;
     max-width: 800px;
     padding: 20px;
-    color: #fff;
+    color: #000;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 10px;
     font-size: 18px;
