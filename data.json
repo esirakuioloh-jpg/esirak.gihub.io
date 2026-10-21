@@ -1,5 +1,5 @@
 {
-  "orders_open": true,
+  "orders_open": false,
   "boosty_fee": 60,
   "skins": [
     "skins/skin-1.png",
