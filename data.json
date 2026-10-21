@@ -1,0 +1,23 @@
+{
+  "orders_open": true,
+  "boosty_fee": 60,
+  "skins": [
+    "skins/skin-1.png"
+  ],
+  "prices": {
+    "main": [
+      { "ru": "Скин с нуля", "en": "Skin from scratch", "price": 230 },
+      { "ru": "Одежда", "en": "Outfit", "price": 200 },
+      { "ru": "Решейд", "en": "Reshade", "price": 180 }
+    ],
+    "extra": [
+      {
+        "ru": "1 деталь к скину с модом ears",
+        "en": "1 extra detail on a skin with the ears mod",
+        "noteRu": "(или figura мод, но только лёгкое, по типу эльфийских ушек без анимации)",
+        "noteEn": "(or the Figura mod, light details only, like elf ears without animation)",
+        "price": 50
+      }
+    ]
+  }
+}

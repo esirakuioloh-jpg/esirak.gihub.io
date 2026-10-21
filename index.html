@@ -152,7 +152,7 @@ section { padding-block: 64px 8px; scroll-margin-top: 70px; }
 .thumb:hover { transform: translateY(-2px); border-color: var(--hot); }
 .thumb[aria-current="true"] { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 22px rgba(255,42,20,.4); }
 .thumb img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-.empty-note { color: var(--mute); font-size: 13px; }
+.empty-msg { margin: 0; color: var(--mute); text-align: center; font-weight: 500; }
 
 /* ---------- news / channel ---------- */
 .news { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: 32px; border-radius: 26px; border: 1px solid var(--line); background: radial-gradient(80% 140% at 0% 0%, rgba(255,42,20,.22), transparent 65%), var(--panel); }
@@ -218,45 +218,51 @@ footer a:hover { text-decoration: underline; }
 </head>
 <body>
 <!-- =====================================================================
-  КАК МЕНЯТЬ САЙТ (всё нужное в этом блоке)
+  Скины, цены и статус заказов лежат в файле data.json и меняются через
+  Telegram-бота (см. папку с ботом). Вручную тоже можно: открой data.json
+  и поправь числа или список skins.
 
-  СКИНЫ
-  1. Положи картинку скина в папку skins/ (например skins/skin-2.png)
-  2. Добавь её имя в список SKINS ниже. Порядок в списке = порядок на сайте.
-     Чтобы убрать скин, удали его строку.
-
-  ЦЕНЫ
-  Меняй число price. Новую услугу добавляй копией строки.
-
-  СТАТУС
-  ORDERS_OPEN = true (открыты) или false (закрыты).
+  Здесь только ссылки и запасные данные на случай, если data.json не загрузился.
 ====================================================================== -->
 <script>
 const ORDER_LINK   = "https://t.me/esirak";          // личные сообщения для заказа
 const CHANNEL_LINK = "https://t.me/esirakloh";       // телеграм канал
 const LAVA_LINK    = "https://app.lava.top/products/5072f5d6-87ae-4857-aa0d-6caf948bb995"; // оплата из других стран
-const ORDERS_OPEN  = true;
-const BOOSTY_FEE   = 60;                             // доплата при оплате через Boosty, ₽
 
-const SKINS = [
-  "skins/skin-1.png",
-  // "skins/skin-2.png",
-  // "skins/skin-3.png",
-];
-
-const PRICES = {
-  main: [
-    { ru: "Скин с нуля", en: "Skin from scratch", price: 230 },
-    { ru: "Одежда",      en: "Outfit",            price: 200 },
-    { ru: "Решейд",      en: "Reshade",           price: 180 },
+const DEFAULT_DATA = {
+  "orders_open": true,
+  "boosty_fee": 60,
+  "skins": [
+    "skins/skin-1.png"
   ],
-  extra: [
-    { ru: "1 деталь к скину с модом ears",
-      en: "1 extra detail on a skin with the ears mod",
-      noteRu: "(или figura мод, но только лёгкое, по типу эльфийских ушек без анимации)",
-      noteEn: "(or the Figura mod, light details only, like elf ears without animation)",
-      price: 50 },
-  ],
+  "prices": {
+    "main": [
+      {
+        "ru": "Скин с нуля",
+        "en": "Skin from scratch",
+        "price": 230
+      },
+      {
+        "ru": "Одежда",
+        "en": "Outfit",
+        "price": 200
+      },
+      {
+        "ru": "Решейд",
+        "en": "Reshade",
+        "price": 180
+      }
+    ],
+    "extra": [
+      {
+        "ru": "1 деталь к скину с модом ears",
+        "en": "1 extra detail on a skin with the ears mod",
+        "noteRu": "(или figura мод, но только лёгкое, по типу эльфийских ушек без анимации)",
+        "noteEn": "(or the Figura mod, light details only, like elf ears without animation)",
+        "price": 50
+      }
+    ]
+  }
 };
 </script>
 
@@ -303,6 +309,7 @@ const PRICES = {
       <div class="stage" id="stage">
         <button class="arrow prev" type="button" id="prevBtn" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
         <img id="skinImg" alt="">
+        <p class="empty-msg" id="emptyMsg" hidden></p>
         <button class="arrow next" type="button" id="nextBtn" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
         <span class="count" id="count"></span>
       </div>
@@ -413,30 +420,33 @@ const PRICES = {
 
   var $ = function (id) { return document.getElementById(id); };
   var cur = 0;
+  var DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
   // order links
   document.querySelectorAll(".order-link").forEach(function (a) { a.href = ORDER_LINK; });
   document.querySelectorAll(".channel-link").forEach(function (a) { a.href = CHANNEL_LINK; });
   document.querySelectorAll(".lava-link").forEach(function (a) { a.href = LAVA_LINK; });
 
-  // ticker
-  var words = ["SKINS", "OUTFITS", "RESHADE", "ESIRAK", "ORDERS " + (ORDERS_OPEN ? "OPEN" : "CLOSED")];
-  var row = words.map(function (w) { return "<span>" + w + " ✦</span>"; }).join("");
-  $("tickerRow").innerHTML = row + row + row + row;
+  function renderTicker() {
+    var words = ["SKINS", "OUTFITS", "RESHADE", "ESIRAK", "ORDERS " + (DATA.orders_open ? "OPEN" : "CLOSED")];
+    var row = words.map(function (w) { return "<span>" + w + " ✦</span>"; }).join("");
+    $("tickerRow").innerHTML = row + row + row + row;
+  }
 
   function applyStatic() {
     var t = T[lang];
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t[el.dataset.i18n]; });
     document.querySelectorAll("[data-i18n-html]").forEach(function (el) { el.innerHTML = t[el.dataset.i18nHtml]; });
-    $("heroStatusText").textContent = ORDERS_OPEN ? t.open : t.closed;
-    $("heroStatus").classList.toggle("closed", !ORDERS_OPEN);
+    $("heroStatusText").textContent = DATA.orders_open ? t.open : t.closed;
+    $("heroStatus").classList.toggle("closed", !DATA.orders_open);
     var sv = $("statusV");
-    sv.textContent = ORDERS_OPEN ? t.status_open : t.status_closed;
-    sv.className = "v " + (ORDERS_OPEN ? "open" : "shut");
+    sv.textContent = DATA.orders_open ? t.status_open : t.status_closed;
+    sv.className = "v " + (DATA.orders_open ? "open" : "shut");
     document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
     document.title = "ESIRAK Skins";
-    $("payV").textContent = t.pay_v.replace("{fee}", BOOSTY_FEE);
+    $("emptyMsg").textContent = t.empty;
+    $("payV").textContent = t.pay_v.replace("{fee}", DATA.boosty_fee);
     renderPrices();
   }
 
@@ -453,7 +463,7 @@ const PRICES = {
     return li;
   }
   function renderPrices() {
-    [["priceMain", PRICES.main], ["priceExtra", PRICES.extra]].forEach(function (g) {
+    [["priceMain", DATA.prices.main], ["priceExtra", DATA.prices.extra]].forEach(function (g) {
       var ul = $(g[0]); ul.innerHTML = "";
       g[1].forEach(function (it) { ul.appendChild(priceRow(it)); });
     });
@@ -463,12 +473,14 @@ const PRICES = {
 
   function renderSkin(animate) {
     var img = $("skinImg");
-    if (!SKINS.length) { img.removeAttribute("src"); img.alt = ""; $("count").textContent = ""; return; }
-    var src = SKINS[cur];
+    $("emptyMsg").hidden = DATA.skins.length > 0;
+    img.hidden = !DATA.skins.length;
+    if (!DATA.skins.length) { img.removeAttribute("src"); img.alt = ""; $("count").textContent = ""; return; }
+    var src = DATA.skins[cur];
     function fill() {
       img.src = src;
       img.alt = "Skin " + (cur + 1);
-      $("count").textContent = pad(cur + 1) + " / " + pad(SKINS.length);
+      $("count").textContent = pad(cur + 1) + " / " + pad(DATA.skins.length);
       img.classList.remove("swap");
     }
     if (animate) { img.classList.add("swap"); setTimeout(fill, 180); } else { fill(); }
@@ -478,7 +490,7 @@ const PRICES = {
   function renderThumbs() {
     var box = $("thumbs");
     box.innerHTML = "";
-    SKINS.forEach(function (src, i) {
+    DATA.skins.forEach(function (src, i) {
       var b = document.createElement("button");
       b.className = "thumb"; b.type = "button"; b.setAttribute("role", "listitem");
       b.setAttribute("aria-label", "Skin " + (i + 1));
@@ -487,14 +499,14 @@ const PRICES = {
       b.addEventListener("click", function () { go(i); });
       box.appendChild(b);
     });
-    var multi = SKINS.length > 1;
+    var multi = DATA.skins.length > 1;
     $("prevBtn").hidden = !multi; $("nextBtn").hidden = !multi;
     box.hidden = !multi;
   }
 
   function go(i) {
-    if (!SKINS.length) return;
-    cur = (i + SKINS.length) % SKINS.length;
+    if (!DATA.skins.length) return;
+    cur = (i + DATA.skins.length) % DATA.skins.length;
     renderSkin(true);
   }
 
@@ -522,11 +534,28 @@ const PRICES = {
     b.addEventListener("click", function () {
       lang = b.dataset.lang;
       try { localStorage.setItem("esirak-lang", lang); } catch (e) {}
-      applyStatic(); renderThumbs(); renderSkin(false);
+      refresh();
     });
   });
 
-  applyStatic(); renderThumbs(); renderSkin(false);
+  function refresh() {
+    applyStatic(); renderTicker(); renderThumbs();
+    if (cur >= DATA.skins.length) cur = 0;
+    renderSkin(false);
+  }
+  refresh();
+
+  // data.json (меняется ботом) подменяет запасные данные
+  try {
+    fetch("data.json?v=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || !Array.isArray(d.skins) || !d.prices || !d.prices.main) return;
+        DATA = Object.assign({}, DEFAULT_DATA, d);
+        refresh();
+      })
+      .catch(function () {});
+  } catch (e) {}
 })();
 </script>
 </body>
