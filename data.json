@@ -1,14 +1,26 @@
 {
-  "orders_open": true,
+  "orders_open": false,
   "boosty_fee": 60,
   "skins": [
     "skins/skin-1.png"
   ],
   "prices": {
     "main": [
-      { "ru": "Скин с нуля", "en": "Skin from scratch", "price": 230 },
-      { "ru": "Одежда", "en": "Outfit", "price": 200 },
-      { "ru": "Решейд", "en": "Reshade", "price": 180 }
+      {
+        "ru": "Скин с нуля",
+        "en": "Skin from scratch",
+        "price": 230
+      },
+      {
+        "ru": "Одежда",
+        "en": "Outfit",
+        "price": 200
+      },
+      {
+        "ru": "Решейд",
+        "en": "Reshade",
+        "price": 180
+      }
     ],
     "extra": [
       {
